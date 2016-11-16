@@ -31,7 +31,7 @@ udpServerSocket.bind(('', 2525))
 #this creates a UDP client socket, and connects it to a server at 192.168.1.1
 #we could also make the server address a variable and specify it with the message
 #when we send it
-udpClientSocket = socket.socket(AF_INET, socket.SOCK_DGRAM)
+udpClientSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
 #connect function specifies where the messages are going to go
 udpClientSocket.connect(('192.168.1.1', 2525))
