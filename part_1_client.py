@@ -2,9 +2,9 @@ import socket
 import sys
 
 #server address
-server_address = ""
+server_address = "localhost"
 #client address
-client_address = ""
+client_address = "localhost"
 #server port
 server_port = 2000
 #client port
