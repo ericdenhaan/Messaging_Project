@@ -23,9 +23,6 @@ while 1:
     else:
         break
 
-#initialize the sequence number
-sequence_number = 0
-
 while 1:    
     #create an empty message
     message = ""
@@ -106,8 +103,8 @@ while 1:
                 print("Message received from " + received_frame[2] + ":" + received_frame[4])
             
             #send an acknowledgement
-            ack = received_frame[0] + "/ack/" + source + received_frame[2] + "/" + received_frame[4]
-            client_socket.sendto(message.encode("utf-8"), (server_address, server_port))
+            ack = received_frame[0] + "/ack/" + source + "/" + received_frame[2] + "/" + received_frame[4]
+            client_socket.sendto(ack.encode("utf-8"), (server_address, server_port))
             
     else:
         print("Goodbye.")

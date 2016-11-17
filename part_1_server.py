@@ -11,14 +11,14 @@ server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 server_socket.bind((host_address, host_port))
 
 #initialize the sequence number to 0
-sequence_number = 0
+sequence_number = 1
 
 #initialize a list of messages
 message_list = []
 
 #function to send a message to a client
 def findMessage(destination, list):
-    for message in list:
+    for received_frame in list:
         if(received_frame[3] == destination):
             return received_frame
 
@@ -28,7 +28,6 @@ def removeMessage(sequence_number, list):
         if(received_frame[0] == sequence_number):
             list.remove(received_frame)
     
-
 #put the server in listen mode, and wait for messages from clients
 print("Server is currently listening for messages from clients:")
 
@@ -50,15 +49,15 @@ while 1:
         
     #if the message is get, look through stored messages    #send those that have the correct client in destination field
     if(received_frame[1] == "get"):
-        response = findMessage(received_frame[2], message_list)
+        response = findMessage(received_frame[2], message_list)	
         if(response != None):
             response = "/".join(response)
-            server_socket.sendto(response.encode("utf-8"), (sender_address[0], sender_address[1]))
+            server_socket.sendto(response.encode("utf-8"), (sender_address[0], sender_address[1]))     
         else:
             response = "1/send/server/" + received_frame[2] + "/"
             server_socket.sendto(response.encode("utf-8"), (sender_address[0], sender_address[1]))
     
     #when we get the ack for a stored message, we delete the message
-        if(received_frame[1] == "ack"):
-            removeMessage(received_frame[0], message_list)
+    if(received_frame[1] == "ack"):
+        removeMessage(received_frame[0], message_list)
         
