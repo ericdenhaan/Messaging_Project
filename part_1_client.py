@@ -2,13 +2,13 @@ import socket
 import sys
 
 #server address
-server_address = "108.173.198.18"
+server_address = ""
 #client address
 client_address = ""
 #server port
 server_port = 2000
 #client port
-client_port = 2100
+client_port = input("Please enter a port (2100 or 2200?): ")
 
 #create the socket
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -26,11 +26,7 @@ while 1:
 #initialize the sequence number
 sequence_number = 0
 
-while 1:
-    #increment the sequence number
-    sequence_number += 1
-    sequence_number_string = str(sequence_number)
-    
+while 1:    
     #create an empty message
     message = ""
     
@@ -41,7 +37,7 @@ while 1:
     if(option == 1):
         #create the message (based on the option given)      
         #seq. no
-        message += sequence_number_string
+        message += "1"
         message += "/"      
         #type (send or get)
         message += "send"
@@ -73,13 +69,13 @@ while 1:
         
         #send the message
         client_socket.sendto(message.encode("utf-8"), (server_address, server_port))
-        break
+        print("Message sent!")
     
     elif(option == 2):
         #create the message (based on the option given)
         #message format:
         #seq. no
-        message += sequence_number_string
+        message += "1"
         message += "/"
         #type (send or get)
         message += "get"
@@ -98,12 +94,13 @@ while 1:
             client_socket.sendto(message.encode("utf-8"), (server_address, server_port))
             
             #process the reply (buffer 256 bits, decode the string, and split it into a list)
-            received_frame, sender_address = s.recvfrom(256)
+            received_frame, sender_address = client_socket.recvfrom(256)
             received_frame = received_frame.decode("utf-8")
-            received_frame = received_frame.split('/')
+            received_frame = received_frame.split("/")
             
             #if no messages left, break, else display the message
             if(received_frame[4] == ""):
+                print("The server has no messages for you.")
                 break
             else:
                 print("Message received from " + received_frame[2] + ":" + received_frame[4])
