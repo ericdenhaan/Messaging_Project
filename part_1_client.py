@@ -15,6 +15,9 @@ client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 #bind the socket to the client address and port
 client_socket.bind((client_address, client_port))
 
+#initialize sequence number to 0
+sequence_number = 0
+
 while 1:
     #get this client's ID
     source = raw_input("Please enter a 10 digit ID: ")
@@ -27,6 +30,11 @@ while 1:
     #create an empty message
     message = ""
     
+    #increment sequence number, if it reaches 100, roll over to 0
+    sequence_number += 1
+    if(sequence_number == 100):
+        sequence_number = 0
+        
     #program options:    
     option = input("Press 1 to send a message,\nPress 2 to receive messages,\nPress 3 to quit: ")
     

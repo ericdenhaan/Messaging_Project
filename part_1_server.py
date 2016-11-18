@@ -11,7 +11,7 @@ server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 server_socket.bind((host_address, host_port))
 
 #initialize the sequence number to 0
-sequence_number = 1
+sequence_number = 0
 
 #initialize a list of messages
 message_list = []
