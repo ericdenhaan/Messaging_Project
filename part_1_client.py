@@ -108,7 +108,7 @@ while 1:
                 print("The server has no messages for you.")
                 break
             else:
-                print("Message received from " + received_frame[2] + ":" + received_frame[4])
+                print("Message received from " + received_frame[2] + ": " + received_frame[4])
             
             #send an acknowledgement
             ack = received_frame[0] + "/ack/" + source + "/" + received_frame[2] + "/" + received_frame[4]
