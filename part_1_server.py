@@ -41,7 +41,7 @@ while 1:
     #if the message is send, store the message
     if(received_frame[1] == "send"):
         message_list.append((str(sequence_number), received_frame[1],
-		received_frame[2], received_frame[3], received_frame[4]))
+        received_frame[2], received_frame[3], received_frame[4]))
         #increment sequence number, if it reaches 100, roll over to 0
         sequence_number += 1
         if(sequence_number == 100):
