@@ -42,7 +42,7 @@ while 1:
     if(option == 1):
         #create the message (based on the option given)      
         #seq. no
-        message += "1"
+        message += str(sequence_number)
         message += "/"      
         #type (send or get)
         message += "send"
@@ -80,7 +80,7 @@ while 1:
         #create the message (based on the option given)
         #message format:
         #seq. no
-        message += "1"
+        message += str(sequence_number)
         message += "/"
         #type (send or get)
         message += "get"
