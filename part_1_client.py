@@ -18,6 +18,9 @@ client_socket.bind((client_address, client_port))
 #initialize sequence number to 0
 sequence_number = 0
 
+#initialize the ack_check variable
+ack_check = False
+
 while 1:
     #get this client's ID
     source = raw_input("Please enter a 10 digit ID: ")
@@ -53,8 +56,6 @@ while 1:
         #destination (ID for the other client)
         while 1:
             destination = raw_input("Please enter the destination client's 10 digit ID: ")
-            #remove any '/' characters so they do not interfere with splitting later
-            destination = destination.replace("/","")
             if(len(destination) != 10):
                 print("Sorry, ID must be 10 digits. Please try again: ")
             else:
@@ -64,8 +65,6 @@ while 1:
         #payload
         while 1:
             payload = raw_input("Please enter the message (max 160 characters): ")
-            #remove "/" characters so they do not interfere with splitting later
-            payload = payload.replace("/", "")
             if(len(payload) > 160):
                 print("Sorry, message must be <= 160 characters. Please try again: ")
             else:
@@ -101,19 +100,25 @@ while 1:
             #process the reply (buffer 256 bits, decode the string, and split it into a list)
             received_frame, sender_address = client_socket.recvfrom(256)
             received_frame = received_frame.decode("utf-8")
-            received_frame = received_frame.split("/")
+            received_frame_list = received_frame.split('/', 4)
             
             #if no messages left, break, else display the message
-            if(received_frame[4] == ""):
-                print("The server has no messages for you.")
+            if(received_frame_list[4] == ""):
+                if(ack_check == True):
+                    pass 
+                else:
+                    print("The server has no messages for you.")
+                ack_check = False
                 break
             else:
-                print("Message received from " + received_frame[2] + ": " + received_frame[4])
-            
-            #send an acknowledgement
-            ack = received_frame[0] + "/ack/" + source + "/" + received_frame[2] + "/" + received_frame[4]
+                print("Message received from " + received_frame_list[2] + ": " + received_frame_list[4])
+                ack_check = True
+				
+			#send an acknowledgement
+            ack = received_frame_list[0] + "/ack/" + source + "/" + received_frame_list[2] + "/" + received_frame_list[4]
             client_socket.sendto(ack.encode("utf-8"), (server_address, server_port))
-            
+			
+			
     else:
         print("Goodbye.")
         #close the connection and the program
