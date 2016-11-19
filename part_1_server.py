@@ -1,10 +1,15 @@
+from twisted.internet import task
+from twisted.internet import reactor
 import socket
 import sys
 
+#---------------------------------------------------------------------------------
+# Basic Server Info
+#---------------------------------------------------------------------------------
 #host(server) address
 host_address = "localhost"
 #host(server) port
-host_port = 2000
+host_port = input("Please enter a port number: ")
 
 #create the server socket and bind it to the host address and port
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -27,7 +32,61 @@ def removeMessage(sequence_number, list):
     for received_frame in list:
         if(received_frame[0] == sequence_number):
             list.remove(received_frame)
-    
+
+
+#---------------------------------------------------------------------------------
+# Distance Vector Routing Implementation
+#---------------------------------------------------------------------------------
+
+#Each server list will contain the two-tuple: (clientID, serverID),
+#periodically, messages will be forwarded to the correct server and 
+#the client ID with the different server will be deleted.
+serverList = []
+
+#get this Servers's ID
+while 1:
+    thisServerID = raw_input("Please enter the server ID (0 to 5): ")
+    else:
+        break
+		
+def addInfoToServerList(clientID, serverID):
+    exists = False
+    for serverListRow in serverList:
+        if((serverListRow[0] == clientID) 
+        && (serverListRow[1] == serverID))
+            exists = True
+            break;
+        if(!exists):
+            serverList.append(clientID, serverID)
+				
+def cleanUpServerList()
+    for serverListRow in serverList:
+	    if(serverListRow[1] != thisServerID):
+            serverList.remove(serverListRow)
+				
+def exchangeListsBetweenServers():
+    #Request data from serverID +/- 1
+
+    #Send user List to serverID +/- 1
+	
+    #Once lists are received loop through them and store that
+    #client in this server's list if the serverID matches
+	
+    #Remove all user tuples from this server's list whose server ID
+    #does not match this server's ID
+    cleanUpServerList()
+
+
+#Run the exchange lists function occasionally 
+timeout = 2.0
+exchangeLists = task.LoopingCall(exchangeListsBetweenServers)
+timeout.start(timeout) # call every sixty seconds
+reactor.run()
+	
+#---------------------------------------------------------------------------------
+# Message Routing
+#---------------------------------------------------------------------------------
+	
 #put the server in listen mode, and wait for messages from clients
 print("Server is currently listening for messages from clients:")
 
