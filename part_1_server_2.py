@@ -6,7 +6,7 @@ import sys
 #---------------------------------------------------------------------------------
 
 #lookup table of server addresses and ports
-server_address_1 = "192.168.1.70"
+server_address_1 = "localhost"
 server_port_1    = 1025
 server_address_2 = "localhost"
 server_port_2    = 1026
@@ -26,8 +26,8 @@ server_port_and_address_list.append([server_port_4,server_address_4])
 server_port_and_address_list.append([server_port_5,server_address_5])
 
 #map the server address & port to the host
-host_address = server_address_1
-host_port = server_port_1
+host_address = server_address_2
+host_port = server_port_2
 
 #create the server socket and bind it to the host address and port
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -73,13 +73,13 @@ def addClient(client_id):
             exists = True
             break
     if(not exists):
-        server_client_list.append([client_id, host_address])
+        server_client_list.append[(client_id), (host_address)]
 
 #function to delete a client from the client/server list
 def deleteClient(client_id):
     for row in server_client_list:
         if((row[0] == client_id)):
-            server_client_list.remove([client_id, host_address])
+            server_client_list.remove[(client_id), (host_address)]
             
 #function to parse the client/server list - it has already been split into tuples based on each client/server pair
 def parseList(incoming_split_list):
@@ -93,7 +93,7 @@ def parseList(incoming_split_list):
                 exists = True
                 break
         if(not exists):
-            server_client_list.append([temp_list[0],temp_list[1]])
+            server_client_list.append[(temp_list[0]),(temp_list[1])]
         
 #function to exchange lists between servers
 def exchangeLists():
