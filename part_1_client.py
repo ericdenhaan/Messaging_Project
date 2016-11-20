@@ -1,12 +1,8 @@
 import socket
 import sys
 
-#server address
-server_address = "localhost"
 #client address
 client_address = "localhost"
-#server port
-server_port = 2000
 #client port
 client_port = input("Please enter a port (2100 or 2200?): ")
 
@@ -29,6 +25,32 @@ while 1:
     else:
         break
 
+		
+while 1:
+    #get this client's corresponding server and assign address and port
+    serverID = raw_input("Please enter the server you want to use for this client (1 to 5): ")
+	print("\n")
+    if ((1 <= serverID) and (serverID <= 5)):
+        if(isinstance(serverID, int))
+            if(serverID == 1):
+                server_address = "localhost"
+                server_port = 1025 				
+			else if(serverID == 2):
+                server_address = "localhost"
+                server_port = 1026		
+			else if(serverID == 3):
+                server_address = "localhost"
+                server_port = 1027 		                            
+			else if(serverID == 4):
+                server_address = "localhost"
+                server_port = 1028	                
+            else if(serverID == 5):		
+                server_address = "localhost"
+                server_port = 1029		                			
+            break
+    else:
+        print("Sorry, the server must be from 1 to 5!  Try again.")
+		
 while 1:    
     #create an empty message
     message = ""
