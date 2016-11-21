@@ -101,7 +101,6 @@ def parseList(incoming_split_list):
 #function to exchange lists between servers
 def sendList():
     string_to_send = ""
-    should_parse = False
     incoming_list = []
     
     #format: client/server?client/server? etc.
@@ -129,15 +128,6 @@ def sendList():
                 #send the client/server list to the correct server (+1/-1)
                 server_socket.sendto(string_to_send.encode("utf-8"), (server_port_and_address_list[i-1][0], server_port_and_address_list[i-1][1]))
                 server_socket.sendto(string_to_send.encode("utf-8"), (server_port_and_address_list[i+1][0], server_port_and_address_list[i+1][1]))
-    
-    #if we need to parse the list
-#    if(should_parse):
-#        #receive and send the client/server list from server +/- 1
-#        incoming_list, sender_address = server_socket.recvfrom(256)
-#        incoming_list = incoming_list.decode("utf-8")
-#        #split each client/server pair into new tuples
-#        incoming_split_list = incoming_list.split('?')
-#        parseList(incoming_split_list)
         
     print("made it through sendList()")
     
@@ -187,5 +177,10 @@ while 1:
     #if we get a terminate message, delete the client/server tuple from the table
     if(received_frame_list[1] == "terminate"):
         deleteClient(received_frame_list[2])
+        
+    #if we get a list message, parse the list
+    if(received_frame.get_value(2).isdigit()):
+        incoming_split_list = received_frame.split("?")
+        parseList(incoming_split_list)
         
     sendList()
