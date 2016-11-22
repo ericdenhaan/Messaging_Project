@@ -96,7 +96,8 @@ def parseList(incoming_split_list):
                 exists = True
                 break
         if(not exists):
-            server_client_list.append([temp_list[0],temp_list[1]])
+            server_client_list.append("ass", "butt")
+            #server_client_list.append([temp_list[0], temp_list[1]])
         
 #function to exchange lists between servers
 def sendList():
@@ -123,7 +124,7 @@ def sendList():
             
     #take care of general case 
     else:
-        for tuple in server_port_and_address_list:
+        for i in range(len(server_port_and_address_list)):
             if(server_port_and_address_list[i][1] == host_port):
                 #send the client/server list to the correct server (+1/-1)
                 server_socket.sendto(string_to_send.encode("utf-8"), (server_port_and_address_list[i-1][0], server_port_and_address_list[i-1][1]))
@@ -179,7 +180,7 @@ while 1:
         deleteClient(received_frame_list[2])
         
     #if we get a list message, parse the list
-    if(received_frame.get_value(2).isdigit()):
+    if(received_frame[2].isdigit()):
         incoming_split_list = received_frame.split("?")
         parseList(incoming_split_list)
         
