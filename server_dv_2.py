@@ -9,7 +9,7 @@ import thread
 #lookup table of server addresses and ports
 server_address_1 = "192.168.1.70"
 server_port_1    = 1025
-server_address_2 = "192.168.1.70"
+server_address_2 = "192.168.1.78"
 server_port_2    = 1026
 #server_address_3 = "localhost"
 #server_port_3    = 1027
@@ -222,9 +222,7 @@ while 1:
     
     #do not send an empty server/client list
     if(server_client_list and send_list):
-        #thread.start_new_thread(sendList, ())
         sendList()
     #forward the messages to the appropriate servers
     if(messages_to_forward):
-        #thread.start_new_thread(forwardMessages, ())
         forwardMessages()

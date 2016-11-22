@@ -3,7 +3,7 @@ import sys
 import thread
 
 #client address
-client_address = "192.168.1.70"
+client_address = "192.168.1.78"
 #client port
 client_port = input("Please enter a port (2100 or 2200?): ")
 
@@ -34,7 +34,7 @@ while 1:
             server_address = "192.168.1.70"
             server_port = 1025 				
         if(serverID == 2):
-            server_address = "192.168.1.70"
+            server_address = "192.168.1.78"
             server_port = 1026		
         if(serverID == 3):
             server_address = "localhost"
