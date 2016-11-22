@@ -10,20 +10,20 @@ server_address_1 = "192.168.1.70"
 server_port_1    = 1025
 server_address_2 = "192.168.1.71"
 server_port_2    = 1026
-server_address_3 = "localhost"
-server_port_3    = 1027
-server_address_4 = "localhost"
-server_port_4    = 1028
-server_address_5 = "localhost"
-server_port_5    = 1029
+#server_address_3 = "localhost"
+#server_port_3    = 1027
+#server_address_4 = "localhost"
+#server_port_4    = 1028
+#server_address_5 = "localhost"
+#server_port_5    = 1029
 
 #fill the list
 server_port_and_address_list = []
 server_port_and_address_list.append([server_address_1,server_port_1])
 server_port_and_address_list.append([server_address_2,server_port_2])
-server_port_and_address_list.append([server_address_3,server_port_3])
-server_port_and_address_list.append([server_address_4,server_port_4])
-server_port_and_address_list.append([server_address_5,server_port_5])
+#server_port_and_address_list.append([server_address_3,server_port_3])
+#server_port_and_address_list.append([server_address_4,server_port_4])
+#server_port_and_address_list.append([server_address_5,server_port_5])
 
 #map the server address & port to the host
 host_address = server_address_1
@@ -133,18 +133,21 @@ def forwardMessages():
         message = message.decode("utf-8")
         message_to_forward_list = message.split("/", 4)
         if(message_to_forward_list[1] == "send"):
+            port = 0
             for tuple in server_client_list:
                 if(tuple[0] == message_to_forward_list[3]):
                     for i in range(len(server_port_and_address_list)):
-                        if(server_port_and_address_list[i][1] == tuple[1]):
-                            port = server_port_and_address_list[i][0]
+                        if(server_port_and_address_list[i][0] == tuple[1]):
+                            port = server_port_and_address_list[i][1]
                             break
                     server_socket.sendto(message.encode("utf-8"), (tuple[1], port))
+                    messages_to_forward.remove(message)
         elif(message_to_forward_list[1] == "terminate"):
             for tuple in server_port_and_address_list:
                 if(tuple[1] != host_port):
                     server_socket.sendto(message.encode("utf-8"), (tuple[0], tuple[1]))
-   
+                    messages_to_forward.remove(message)
+                    
 #---------------------------------------------------------------------------------
 # Message Routing
 #---------------------------------------------------------------------------------
@@ -203,10 +206,7 @@ while 1:
         if(response != None):
             response = "/".join(response)
             server_socket.sendto(response.encode("utf-8"), (sender_address[0], sender_address[1]))     
-        else:
-            response = "1/send/server/" + received_frame_list[2] + "/"
-            server_socket.sendto(response.encode("utf-8"), (sender_address[0], sender_address[1]))
-       
+
     #when we get the ack for a stored message, we delete the message
     if(received_frame_list[1] == "ack"):
         removeMessage(received_frame_list[0], message_list)
