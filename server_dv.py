@@ -206,7 +206,10 @@ while 1:
         if(response != None):
             response = "/".join(response)
             server_socket.sendto(response.encode("utf-8"), (sender_address[0], sender_address[1]))     
-
+        else:
+            response = "1/send/server/" + received_frame_list[2] + "/"
+            server_socket.sendto(response.encode("utf-8"), (sender_address[0], sender_address[1]))
+    
     #when we get the ack for a stored message, we delete the message
     if(received_frame_list[1] == "ack"):
         removeMessage(received_frame_list[0], message_list)
