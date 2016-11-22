@@ -74,7 +74,6 @@ def addClient(client_id):
             break
     if(not exists):
         server_client_list.append([client_id.decode("utf-8"), host_address])
-    print(server_client_list)
 
 #function to delete a client from the client/server list
 def deleteClient(client_id):
@@ -85,7 +84,6 @@ def deleteClient(client_id):
             
 #function to parse the client/server list - it has already been split into tuples based on each client/server pair
 def parseList(incoming_split_list):
-    print("parsing list")
     #for each tuple of the incoming client/server list
     for row in incoming_split_list:
         exists = False
@@ -95,9 +93,8 @@ def parseList(incoming_split_list):
             if((temp_list[0] == tuple[0])):
                 exists = True
                 break
-        if(not exists):
-            server_client_list.append("ass", "butt")
-            #server_client_list.append([temp_list[0], temp_list[1]])
+        if((not exists) and (temp_list)):
+            server_client_list.append([temp_list[0], temp_list[1]])
         
 #function to exchange lists between servers
 def sendList():
@@ -109,7 +106,8 @@ def sendList():
         string_to_send += row[0]
         string_to_send += "/"
         string_to_send += row[1]
-        string_to_send += "?"
+        if(row != server_client_list[len(server_client_list) - 1]):
+            string_to_send += "?"
    
     #take care of 0th index case
     if(host_port == server_port_and_address_list[0][1]):          
@@ -126,12 +124,10 @@ def sendList():
     else:
         for i in range(len(server_port_and_address_list)):
             if(server_port_and_address_list[i][1] == host_port):
-                #send the client/server list to the correct server (+1/-1)
+                #send the client/server list to the correct server (-1/+1)
                 server_socket.sendto(string_to_send.encode("utf-8"), (server_port_and_address_list[i-1][0], server_port_and_address_list[i-1][1]))
-                server_socket.sendto(string_to_send.encode("utf-8"), (server_port_and_address_list[i+1][0], server_port_and_address_list[i+1][1]))
-        
-    print("made it through sendList()")
-    
+                #server_socket.sendto(string_to_send.encode("utf-8"), (server_port_and_address_list[i+1][0], server_port_and_address_list[i+1][1]))
+
 #---------------------------------------------------------------------------------
 # Message Routing
 #---------------------------------------------------------------------------------
@@ -141,12 +137,26 @@ def sendList():
 print("Server is currently listening for messages from clients:")
 
 while 1:
+    #print the server/client list
+    if(server_client_list):
+        print("the current server/client list:")
+        print(server_client_list)
+        
+    #flag to avoid feedback loops with server/client list exchange
+    send_list = True
+    
     #if a message comes in, determine its type by examining the type field
     received_frame, sender_address = server_socket.recvfrom(256)
     received_frame = received_frame.decode("utf-8")
     received_frame_list = received_frame.split('/', 4)
     print("Incoming Message: ", received_frame_list)
 
+    #if we get a list message, parse the list
+    if(received_frame[2].isdigit()):
+        send_list = False
+        incoming_split_list = received_frame.split("?")
+        parseList(incoming_split_list)
+    
     #if the message is send, store the message
     if(received_frame_list[1] == "send"):
         message_list.append((str(sequence_number), received_frame_list[1],
@@ -178,10 +188,7 @@ while 1:
     #if we get a terminate message, delete the client/server tuple from the table
     if(received_frame_list[1] == "terminate"):
         deleteClient(received_frame_list[2])
-        
-    #if we get a list message, parse the list
-    if(received_frame[2].isdigit()):
-        incoming_split_list = received_frame.split("?")
-        parseList(incoming_split_list)
-        
-    sendList()
+    
+    #do not send an empty server/client list
+    if(server_client_list and send_list):
+        sendList()
