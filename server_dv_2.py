@@ -9,7 +9,7 @@ import thread
 #lookup table of server addresses and ports
 server_address_1 = "192.168.1.70"
 server_port_1    = 1025
-server_address_2 = "192.168.1.71"
+server_address_2 = "192.168.1.70"
 server_port_2    = 1026
 #server_address_3 = "localhost"
 #server_port_3    = 1027
@@ -27,8 +27,8 @@ server_port_and_address_list.append([server_address_2,server_port_2])
 #server_port_and_address_list.append([server_address_5,server_port_5])
 
 #map the server address & port to the host
-host_address = server_address_1
-host_port = server_port_1
+host_address = server_address_2
+host_port = server_port_2
 
 #create the server socket and bind it to the host address and port
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
