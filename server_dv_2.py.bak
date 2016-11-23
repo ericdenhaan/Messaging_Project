@@ -81,8 +81,6 @@ def deleteClient(client_id):
     if(server_client_list):
         for row in server_client_list:
             if((row[0] == client_id)):
-                print("inside deleteClient")
-                print([client_id, host_address])
                 server_client_list.remove(row)
             
 #function to parse the client/server list - it has already been split into tuples based on each client/server pair

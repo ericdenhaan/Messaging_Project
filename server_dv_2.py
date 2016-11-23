@@ -81,8 +81,6 @@ def deleteClient(client_id):
     if(server_client_list):
         for row in server_client_list:
             if((row[0] == client_id)):
-                print("inside deleteClient")
-                print([client_id, host_address])
                 server_client_list.remove(row)
             
 #function to parse the client/server list - it has already been split into tuples based on each client/server pair
@@ -175,10 +173,10 @@ while 1:
     
     #print the server/client list
     if(server_client_list):
-        print("the current server/client list:")
+        print("The current server/client list:")
         print(server_client_list)
     else:
-        print("there are no clients attached to the servers")
+        print("There are no clients attached to the servers.")
         
     #flag to avoid feedback loops with server/client list exchange
     send_list = True
