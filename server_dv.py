@@ -78,9 +78,12 @@ def addClient(client_id):
 
 #function to delete a client from the client/server list
 def deleteClient(client_id):
-    for row in server_client_list:
-        if((row[0] == client_id)):
-            server_client_list.remove([client_id, host_address])
+    if(server_client_list):
+        for row in server_client_list:
+            if((row[0] == client_id)):
+                print("inside deleteClient")
+                print([client_id, host_address])
+                server_client_list.remove(row)
             
 #function to parse the client/server list - it has already been split into tuples based on each client/server pair
 def parseList(incoming_split_list):
@@ -143,11 +146,15 @@ def forwardMessages():
                             break
                     server_socket.sendto(message.encode("utf-8"), (tuple[1], port))
                     messages_to_forward.remove(message)
-        elif(message_to_forward_list[1] == "terminate"):
-            for tuple in server_port_and_address_list:
-                if(tuple[1] != host_port):
-                    server_socket.sendto(message.encode("utf-8"), (tuple[0], tuple[1]))
-                    messages_to_forward.remove(message)
+
+#function to flood terminates to ensure the list is consistent
+def forwardTerminates(received_frame):
+    #set a flag to avoid feedback loops
+    received_frame += "1"
+    if(server_client_list):
+        for tuple in server_port_and_address_list:
+            if(tuple[1] != host_port):
+                server_socket.sendto(received_frame.encode("utf-8"), (tuple[0], tuple[1]))
                     
 #---------------------------------------------------------------------------------
 # Message Routing
@@ -158,10 +165,20 @@ def forwardMessages():
 print("Server is currently listening for messages from clients:")
 
 while 1:
+    #do not send an empty server/client list
+    if(server_client_list and send_list):
+        sendList()
+        
+    #forward the messages to the appropriate servers
+    if(messages_to_forward):
+        forwardMessages()
+    
     #print the server/client list
     if(server_client_list):
         print("the current server/client list:")
         print(server_client_list)
+    else:
+        print("there are no clients attached to the servers")
         
     #flag to avoid feedback loops with server/client list exchange
     send_list = True
@@ -216,13 +233,10 @@ while 1:
         removeMessage(received_frame_list[0], message_list)
         
     #if we get a terminate message, delete the client/server tuple from the table
+    #if the flag is not 1, then we can flood the terminate to all servers
     if(received_frame_list[1] == "terminate"):
-        deleteClient(received_frame_list[2])
-        messages_to_forward.append(received_frame)
-    
-    #do not send an empty server/client list
-    if(server_client_list and send_list):
-        sendList()
-    #forward the messages to the appropriate servers
-    if(messages_to_forward):
-        forwardMessages()
+        if(received_frame_list[4] == "1"):
+            deleteClient(received_frame_list[2])
+        else:
+            forwardTerminates(received_frame)
+            deleteClient(received_frame_list[2])
