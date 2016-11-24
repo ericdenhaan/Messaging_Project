@@ -176,7 +176,7 @@ while 1:
     #if the message is send, store the message
     if(received_frame_list[1] == "send"):
         exists = False
-        message_list.append((str(sequence_number), received_frame_list[1],
+        message_list.append((received_frame_list[0], received_frame_list[1],
         received_frame_list[2], received_frame_list[3], received_frame_list[4]))
         #also, add the source to the client/server list
         addClient(received_frame_list[2])

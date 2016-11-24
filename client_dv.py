@@ -94,6 +94,7 @@ while 1:
         #send the message
         client_socket.sendto(message.encode("utf-8"), (server_address, server_port))
         print("Message sent!")
+        print(message)
     
     elif(option == 2):
         #create the message (based on the option given)
@@ -121,6 +122,7 @@ while 1:
             received_frame, sender_address = client_socket.recvfrom(256)
             received_frame = received_frame.decode("utf-8")
             received_frame_list = received_frame.split('/', 4)
+            print(received_frame_list)
             
             #if no messages left, break, else display the message
             if(received_frame_list[4] == ""):
@@ -137,6 +139,7 @@ while 1:
             #send an acknowledgement
             ack = received_frame_list[0] + "/ack/" + source + "/" + received_frame_list[2] + "/" + received_frame_list[4]
             client_socket.sendto(ack.encode("utf-8"), (server_address, server_port))
+            print(ack)
                       
     else:
         print("Goodbye.")
