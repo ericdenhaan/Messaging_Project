@@ -129,22 +129,6 @@ def sendList():
                 server_socket.sendto(string_to_send.encode("utf-8"), (server_port_and_address_list[i-1][0], server_port_and_address_list[i-1][1]))
                 #server_socket.sendto(string_to_send.encode("utf-8"), (server_port_and_address_list[i+1][0], server_port_and_address_list[i+1][1]))
 
-#function to forward messages to appropriate servers
-def forwardMessages():
-    for message in messages_to_forward:
-        message = message.decode("utf-8")
-        message_to_forward_list = message.split("/", 4)
-        if(message_to_forward_list[1] == "send"):
-            port = 0
-            for tuple in server_client_list:
-                if(tuple[0] == message_to_forward_list[3]):
-                    for i in range(len(server_port_and_address_list)):
-                        if(server_port_and_address_list[i][0] == tuple[1]):
-                            port = server_port_and_address_list[i][1]
-                            break
-                    server_socket.sendto(message.encode("utf-8"), (tuple[1], port))
-                    messages_to_forward.remove(message)
-
 #function to flood terminates to ensure the list is consistent
 def forwardTerminates(received_frame):
     #set a flag to avoid feedback loops
@@ -166,11 +150,7 @@ while 1:
     #do not send an empty server/client list
     if(server_client_list and send_list):
         sendList()
-        
-    #forward the messages to the appropriate servers
-    if(messages_to_forward):
-        forwardMessages()
-    
+
     #print the server/client list
     if(server_client_list):
         print("The current server/client list:")
