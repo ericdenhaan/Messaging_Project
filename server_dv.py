@@ -153,7 +153,7 @@ def forwardTerminates(received_frame):
         for tuple in server_port_and_address_list:
             if(tuple[1] != host_port):
                 server_socket.sendto(received_frame.encode("utf-8"), (tuple[0], tuple[1]))
-                    
+
 #---------------------------------------------------------------------------------
 # Message Routing
 #---------------------------------------------------------------------------------
@@ -228,8 +228,8 @@ while 1:
     
     #when we get the ack for a stored message, we delete the message
     if(received_frame_list[1] == "ack"):
-        removeMessage(received_frame_list[0], message_list)
-        
+            removeMessage(received_frame_list[0], message_list)
+
     #if we get a terminate message, delete the client/server tuple from the table
     #if the flag is not 1, then we can flood the terminate to all servers
     if(received_frame_list[1] == "terminate"):

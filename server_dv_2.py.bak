@@ -144,6 +144,7 @@ def forwardMessages():
                             break
                     server_socket.sendto(message.encode("utf-8"), (tuple[1], port))
                     messages_to_forward.remove(message)
+                    removeMessage(message_to_forward_list[0], message_list)
 
 #function to flood terminates to ensure the list is consistent
 def forwardTerminates(received_frame):
@@ -153,7 +154,7 @@ def forwardTerminates(received_frame):
         for tuple in server_port_and_address_list:
             if(tuple[1] != host_port):
                 server_socket.sendto(received_frame.encode("utf-8"), (tuple[0], tuple[1]))
-                    
+
 #---------------------------------------------------------------------------------
 # Message Routing
 #---------------------------------------------------------------------------------
@@ -173,10 +174,10 @@ while 1:
     
     #print the server/client list
     if(server_client_list):
-        print("the current server/client list:")
+        print("The current server/client list:")
         print(server_client_list)
     else:
-        print("there are no clients attached to the servers")
+        print("There are no clients attached to the servers.")
         
     #flag to avoid feedback loops with server/client list exchange
     send_list = True
@@ -228,7 +229,7 @@ while 1:
     
     #when we get the ack for a stored message, we delete the message
     if(received_frame_list[1] == "ack"):
-        removeMessage(received_frame_list[0], message_list)
+            removeMessage(received_frame_list[0], message_list)
         
     #if we get a terminate message, delete the client/server tuple from the table
     #if the flag is not 1, then we can flood the terminate to all servers
