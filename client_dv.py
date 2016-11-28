@@ -46,6 +46,10 @@ while 1:
     else:
         print("Sorry, the server must be from 1 to 5!  Try again.")
         
+#send an initial handshake to get the list set up
+handshake = "1/handshake/"+source+"//"
+client_socket.sendto(handshake.encode("utf-8"), (server_address, server_port))
+        
 while 1:    
     #create an empty message
     message = ""
@@ -85,8 +89,7 @@ while 1:
         
         #send the message
         client_socket.sendto(message.encode("utf-8"), (server_address, server_port))
-        print("Message sent:")
-        print(message)
+        print("Message sent!")
     
     elif(option == 2):
         #create the message (based on the option given)
@@ -106,15 +109,23 @@ while 1:
         message += ""
         
         #while there are unread messages for this client on the server
-        while 1:
-            #send the get request
-            client_socket.sendto(message.encode("utf-8"), (server_address, server_port))
-
-            #process the reply (buffer 256 bits, decode the string, and split it into a list)
-            received_frame, sender_address = client_socket.recvfrom(256)
-            received_frame = received_frame.decode("utf-8")
-            received_frame_list = received_frame.split('/', 4)
+        count = 0
+        while 1:      
+            while count < 6:            
+                #send the get request
+                client_socket.sendto(message.encode("utf-8"), (server_address, server_port))
+                
+                #process the reply (buffer 256 bits, decode the string, and split it into a list)
+                received_frame, sender_address = client_socket.recvfrom(256)
+                received_frame = received_frame.decode("utf-8")
+                received_frame_list = received_frame.split('/', 4)
             
+                if(received_frame[4] != ""):
+                    count = 0
+                    break
+                else:
+                    count += 1
+
             #if no messages left, break, else display the message
             if(received_frame_list[4] == ""):
                 if(ack_check == True):

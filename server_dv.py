@@ -177,17 +177,6 @@ print("Server is currently listening for messages from clients:")
 counter = 0
 
 while 1:
-    print("messages to forward:")
-    print(messages_to_forward)
-    print("message list:")
-    print(message_list)
-    if(messages_to_forward):
-        forwardMessages()
-    
-    #do not send an empty server/client list
-    if(server_client_list and send_list):
-        sendList()
-
     #print the server/client list
     if(server_client_list):
         print("The current server/client list:")
@@ -216,8 +205,11 @@ while 1:
         message_list.append((str(sequence_number), received_frame_list[1],
         received_frame_list[2], received_frame_list[3], received_frame_list[4]))
         
-        messages_to_forward.append((str(sequence_number), received_frame_list[1],
-        received_frame_list[2], received_frame_list[3], received_frame_list[4]))
+        for row in server_client_list:
+            if(received_frame_list[3] == row[0]):
+                if(row[1] != host_address):
+                    messages_to_forward.append((str(sequence_number), received_frame_list[1],
+                    received_frame_list[2], received_frame_list[3], received_frame_list[4]))
 
         #also, add the source to the client/server list
         addClient(received_frame_list[2])
@@ -253,5 +245,13 @@ while 1:
             forwardTerminates(received_frame)
             deleteClient(received_frame_list[2])
             
+    if(received_frame_list[1] == "handshake"):
+        addClient(received_frame_list[2])
+        sendList()
+        
+    print("messages to forward:")
+    print(messages_to_forward)
+    print("message list:")
+    print(message_list)
     if(messages_to_forward):
         forwardMessages()
