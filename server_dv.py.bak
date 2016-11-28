@@ -34,11 +34,11 @@ host_port = server_port_1
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 server_socket.bind((host_address, host_port))
 
-#initialize the sequence number to 0
-sequence_number = 0
-
 #initialize a list of messages
 message_list = []
+
+#initialize the sequence number to 0
+sequence_number = 0
 
 #function to send a message to a client
 def findMessage(destination, list):
@@ -138,6 +138,34 @@ def forwardTerminates(received_frame):
             if(tuple[1] != host_port):
                 server_socket.sendto(received_frame.encode("utf-8"), (tuple[0], tuple[1]))
 
+#function to forward messages to other servers
+def forwardMessages():
+    print("forwarding messages:")
+    for message in messages_to_forward:
+        dest_address = ""
+        dest_port = 0
+        
+        for tuple in server_client_list:
+            if(tuple[0] == message[3]):
+                dest_address = tuple[1]
+                for i in range(len(server_port_and_address_list)):
+                    if(server_port_and_address_list[i][0] == tuple[1]):
+                        dest_port = server_port_and_address_list[i][1]
+                        break
+                forwarded_message = "/".join(message)
+                print("here", forwarded_message)
+                if(dest_port != 0 and dest_address != "" and dest_address != host_address):
+                    server_socket.sendto(forwarded_message.encode("utf-8"), (dest_address, dest_port))
+                    print("forwarding message: ", forwarded_message, "to server at: ", dest_address)
+                    messages_to_forward.remove(message)
+
+def receiveMessage():
+    received_frame, sender_address = server_socket.recvfrom(256)
+    received_frame = received_frame.decode("utf-8")
+    received_frame_list = received_frame.split("/", 4)
+    print("Incoming Message: ", received_frame_list)
+    return received_frame, received_frame_list, sender_address
+    
 #---------------------------------------------------------------------------------
 # Message Routing
 #---------------------------------------------------------------------------------
@@ -146,7 +174,16 @@ def forwardTerminates(received_frame):
 #put the server in listen mode, and wait for messages from clients
 print("Server is currently listening for messages from clients:")
 
+counter = 0
+
 while 1:
+    print("messages to forward:")
+    print(messages_to_forward)
+    print("message list:")
+    print(message_list)
+    if(messages_to_forward):
+        forwardMessages()
+    
     #do not send an empty server/client list
     if(server_client_list and send_list):
         sendList()
@@ -162,11 +199,11 @@ while 1:
     send_list = True
     
     #if a message comes in, determine its type by examining the type field
-    received_frame, sender_address = server_socket.recvfrom(256)
-    received_frame = received_frame.decode("utf-8")
-    received_frame_list = received_frame.split("/", 4)
-    print("Incoming Message: ", received_frame_list)
-
+    received_frame = ""
+    received_frame_list = []
+    sender_address = ""
+    received_frame, received_frame_list, sender_address = receiveMessage()
+    
     #if we get a list message, parse the list
     if(received_frame[2].isdigit()):
         send_list = False
@@ -176,25 +213,22 @@ while 1:
     #if the message is send, store the message
     if(received_frame_list[1] == "send"):
         exists = False
-        message_list.append(received_frame_list[0], received_frame_list[1],
+        message_list.append((str(sequence_number), received_frame_list[1],
         received_frame_list[2], received_frame_list[3], received_frame_list[4]))
+        
+        messages_to_forward.append((str(sequence_number), received_frame_list[1],
+        received_frame_list[2], received_frame_list[3], received_frame_list[4]))
+
         #also, add the source to the client/server list
         addClient(received_frame_list[2])
-        #if the destination client is not served by this server,
-        #add it to messages_to_forward
-        for row in server_client_list:
-            if((row[0] == received_frame_list[3])):
-                exists = True
-                break
-        if(exists == False):
-            messages_to_forward.append(received_frame)
-        
+
         #increment sequence number, if it reaches 100, roll over to 0
         sequence_number += 1
         if(sequence_number == 100):
             sequence_number = 0
-        
+
     #if the message is get, look through stored messages    #send those that have the correct client in destination field
+    #if there is nothing, send a dummy message
     if(received_frame_list[1] == "get"):
         #add the source to the client/server list
         addClient(received_frame_list[2])
@@ -218,3 +252,6 @@ while 1:
         else:
             forwardTerminates(received_frame)
             deleteClient(received_frame_list[2])
+            
+    if(messages_to_forward):
+        forwardMessages()

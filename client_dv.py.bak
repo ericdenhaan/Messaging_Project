@@ -12,9 +12,6 @@ client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 #bind the socket to the client address and port
 client_socket.bind((client_address, client_port))
 
-#initialize sequence number to 0
-sequence_number = 0
-
 #initialize the ack_check variable
 ack_check = False
 
@@ -52,12 +49,7 @@ while 1:
 while 1:    
     #create an empty message
     message = ""
-    
-    #increment sequence number, if it reaches 100, roll over to 0
-    sequence_number += 1
-    if(sequence_number == 100):
-        sequence_number = 0
-        
+            
     #program options:    
     option = input("Press 1 to send a message,\nPress 2 to receive messages,\nPress 3 to quit: ")
     
@@ -65,7 +57,7 @@ while 1:
     if(option == 1):
         #create the message (based on the option given)      
         #seq. no
-        message += str(sequence_number)
+        message += "1"
         message += "/"      
         #type (send or get)
         message += "send"
@@ -93,14 +85,14 @@ while 1:
         
         #send the message
         client_socket.sendto(message.encode("utf-8"), (server_address, server_port))
-        print("Message sent!")
+        print("Message sent:")
         print(message)
     
     elif(option == 2):
         #create the message (based on the option given)
         #message format:
         #seq. no
-        message += str(sequence_number)
+        message += "1"
         message += "/"
         #type (send or get)
         message += "get"
@@ -117,12 +109,11 @@ while 1:
         while 1:
             #send the get request
             client_socket.sendto(message.encode("utf-8"), (server_address, server_port))
-            
+
             #process the reply (buffer 256 bits, decode the string, and split it into a list)
             received_frame, sender_address = client_socket.recvfrom(256)
             received_frame = received_frame.decode("utf-8")
             received_frame_list = received_frame.split('/', 4)
-            print(received_frame_list)
             
             #if no messages left, break, else display the message
             if(received_frame_list[4] == ""):
@@ -139,7 +130,9 @@ while 1:
             #send an acknowledgement
             ack = received_frame_list[0] + "/ack/" + source + "/" + received_frame_list[2] + "/" + received_frame_list[4]
             client_socket.sendto(ack.encode("utf-8"), (server_address, server_port))
-                      
+            print("ack sent:")
+            print(ack)
+            
     else:
         print("Goodbye.")
         #send a terminate message to the server to make the server remove any info for this client
