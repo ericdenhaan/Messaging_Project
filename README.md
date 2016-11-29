@@ -1,4 +1,4 @@
-3780 Project â€“ Messaging Program
+3780 Project – Messaging Program
 Written By: Adam Lefaivre and Eric Den Haan
 
 How to use this program:
@@ -8,4 +8,6 @@ How to use this program:
 3.Run servers, then run clients
 
 Follow the directions and enjoy!
+
+Set up to run on C Lab computers batman - joker
 
