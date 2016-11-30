@@ -51,9 +51,6 @@ server_client_list = []
 #each server also has a list of messages that it must forward to other servers
 messages_to_forward = []
 
-#the current size of our client/server list
-list_size = 0
-
 #---------------------------------------------------------------------------------
 # Functions
 #---------------------------------------------------------------------------------
@@ -230,7 +227,8 @@ while 1:
         if(sequence_number == 100):
             sequence_number = 0
 
-    #if the message is get, look through stored messages    #send those that have the correct client in destination field
+    #if the message is get, look through stored messages
+    #send those that have the correct client in destination field
     #if there is nothing, send a dummy message
     if(received_frame_list[1] == "get"):
         #add the source to the client/server list
